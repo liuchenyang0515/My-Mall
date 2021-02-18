@@ -55,6 +55,18 @@ public class WebLogAspect {
         log.info("ARGS: " + Arrays.toString(joinPoint.getArgs()));
     }
 
+    /**
+     * 对于这里的returning = "res"，就是UserController目标方法
+     *     @GetMapping("/test")
+     *     @ResponseBody
+     *     public User personalPage() {
+     *         return userService.getUser();
+     *     }
+     * 的返回值赋值为res注入到doAfterReturning方法的参数中，所以这里的Object res其实是User类型，可以调试观察
+     *
+     * @param res
+     * @throws JsonProcessingException
+     */
     @AfterReturning(returning = "res", pointcut = "webLog()")
     public void doAfterReturning(Object res) throws JsonProcessingException {
         // 处理完成，返回内容
