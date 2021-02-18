@@ -5,7 +5,6 @@ import com.me.mall.exception.MyMallExceptionEnum;
 import com.me.mall.model.dao.UserMapper;
 import com.me.mall.model.pojo.User;
 import com.me.mall.service.UserService;
-import com.mysql.cj.protocol.x.ReusableInputStream;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
