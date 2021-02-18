@@ -1,6 +1,7 @@
 package com.me.mall.controller;
 
 import com.me.mall.common.ApiRestResponse;
+import com.me.mall.exception.MyMallException;
 import com.me.mall.exception.MyMallExceptionEnum;
 import com.me.mall.model.pojo.User;
 import com.me.mall.service.UserService;
@@ -29,7 +30,7 @@ public class UserController {
 
     @PostMapping("/register")
     @ResponseBody
-    public ApiRestResponse register(@RequestParam("username") String username, @RequestParam("password") String password) {
+    public ApiRestResponse register(@RequestParam("username") String username, @RequestParam("password") String password) throws MyMallException {
         if (StringUtils.isEmpty(username)) {
             return ApiRestResponse.error(MyMallExceptionEnum.NEED_USER_NAME);
         }
@@ -40,6 +41,7 @@ public class UserController {
         if (password.length() < 8) {
             return ApiRestResponse.error(MyMallExceptionEnum.PASSWORD_TOO_SHORT);
         }
-        return null;
+        userService.register(username, password);
+        return ApiRestResponse.success();
     }
 }

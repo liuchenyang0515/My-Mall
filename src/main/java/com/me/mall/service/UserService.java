@@ -1,5 +1,6 @@
 package com.me.mall.service;
 
+import com.me.mall.exception.MyMallException;
 import com.me.mall.model.pojo.User;
 
 /**
@@ -8,5 +9,5 @@ import com.me.mall.model.pojo.User;
 public interface UserService {
     User getUser();
 
-    void register(String userName, String password);
+    void register(String userName, String password) throws MyMallException;
 }
