@@ -7,4 +7,6 @@ import com.me.mall.model.pojo.User;
  */
 public interface UserService {
     User getUser();
+
+    void register(String userName, String password);
 }
