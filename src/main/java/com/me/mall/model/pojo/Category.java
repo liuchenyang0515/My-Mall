@@ -1,7 +1,7 @@
 package com.me.mall.model.pojo;
 
 import java.util.Date;
-
+// plain ordinary java object与表结构对应
 public class Category {
     private Integer id;
 

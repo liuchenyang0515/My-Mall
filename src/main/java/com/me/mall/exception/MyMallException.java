@@ -3,7 +3,7 @@ package com.me.mall.exception;
 /**
  * 描述：统一异常
  */
-public class MyMallException extends Exception {
+public class MyMallException extends RuntimeException {
     private final Integer code;
     private final String message;
 
