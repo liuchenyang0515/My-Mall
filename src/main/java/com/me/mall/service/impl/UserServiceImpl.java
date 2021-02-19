@@ -51,14 +51,30 @@ public class UserServiceImpl implements UserService {
     public User login(String userName, String password) throws MyMallException {
         String md5Password = null;
         try {
-            String md5Str = MD5Utils.getMD5Str(password);
+            // 查询时要传入经过md5后的密码
+            md5Password = MD5Utils.getMD5Str(password);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        User user = userMapper.selectLogin(userName, password);
+        User user = userMapper.selectLogin(userName, md5Password);
         if (user == null) {
             throw new MyMallException(MyMallExceptionEnum.WRONG_PASSWORD);
         }
         return user;
+    }
+
+    @Override
+    public void updateInformation(User user) throws MyMallException {
+        // 更新个性签名
+        int updateCount = userMapper.updateByPrimaryKeySelective(user);
+        if (updateCount > 1) {
+            throw new MyMallException(MyMallExceptionEnum.UPDATE_FAILED);
+        }
+    }
+
+    @Override
+    public boolean checkAdminRole(User user) {
+        // 1是普通用户，2是管理员
+        return user.getRole().equals(2);
     }
 }

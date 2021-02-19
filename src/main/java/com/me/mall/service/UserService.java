@@ -12,4 +12,8 @@ public interface UserService {
     void register(String userName, String password) throws MyMallException;
 
     User login(String userName, String password) throws MyMallException;
+
+    void updateInformation(User user) throws MyMallException;
+
+    boolean checkAdminRole(User user);
 }
