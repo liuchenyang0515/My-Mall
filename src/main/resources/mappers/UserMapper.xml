@@ -121,4 +121,12 @@
     from me_mall_user
     where username = #{userName, jdbcType=VARCHAR}
   </select>
+  <!-- 不止一个入参，所以不是java.lang.String"，而是map -->
+  <select id="selectLogin" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from me_mall_user
+    where username = #{userName, jdbcType=VARCHAR}
+    and password = #{password}
+  </select>
 </mapper>

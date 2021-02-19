@@ -1,6 +1,7 @@
 package com.me.mall.model.dao;
 
 import com.me.mall.model.pojo.User;
+import org.apache.ibatis.annotations.Param;
 
 public interface UserMapper {
     int deleteByPrimaryKey(Integer id);
@@ -16,4 +17,6 @@ public interface UserMapper {
     int updateByPrimaryKey(User record);
 
     User selectByName(String userName);
+    // 一个入参可以不写@Param，两个就需要写了
+    User selectLogin(@Param("username") String userName, @Param("password") String password);
 }

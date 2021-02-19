@@ -18,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 public class UserServiceImpl implements UserService {
     @Resource
     UserMapper userMapper;
+
     @Override
     public User getUser() {
         // 通过主键查询一个对象
@@ -44,5 +45,20 @@ public class UserServiceImpl implements UserService {
         if (count == 0) {
             throw new MyMallException(MyMallExceptionEnum.INSERT_FAILED);
         }
+    }
+
+    @Override
+    public User login(String userName, String password) throws MyMallException {
+        String md5Password = null;
+        try {
+            String md5Str = MD5Utils.getMD5Str(password);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        User user = userMapper.selectLogin(userName, password);
+        if (user == null) {
+            throw new MyMallException(MyMallExceptionEnum.WRONG_PASSWORD);
+        }
+        return user;
     }
 }

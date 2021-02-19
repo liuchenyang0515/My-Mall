@@ -10,4 +10,6 @@ public interface UserService {
     User getUser();
 
     void register(String userName, String password) throws MyMallException;
+
+    User login(String userName, String password) throws MyMallException;
 }
