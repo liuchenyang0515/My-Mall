@@ -3,9 +3,15 @@ package com.me.mall.exception;
 import com.me.mall.common.ApiRestResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 描述：处理统一异常的handler
@@ -61,5 +67,40 @@ public class GlobalExceptionHandler {
         log.error("MyMallException: ", e);
         // 返回一个通用对象，里面是status、msg、data
         return ApiRestResponse.error(e.getCode(), e.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseBody
+    public ApiRestResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        log.error("MethodArgumentNotValidException: ", e);
+        return handleBindingResult(e.getBindingResult());
+
+    }
+
+    private ApiRestResponse handleBindingResult(BindingResult result) {
+        // 把异常处理为对外暴露的提示
+        List<String> list = new ArrayList<>();
+        if (result.hasErrors()) {
+            List<ObjectError> allErrors = result.getAllErrors();
+            for (ObjectError objectError : allErrors) {
+                /**
+                 * 前端请求体如下
+                 * {
+                 *     "name":"鸭货",
+                 *     "type":4,
+                 *     "orderNum":10
+                 * }
+                 * 根据调试，allErrors的size = 2，
+                 * 第一个：ObjectError{objectName："addCategoryReq",field:"type",defaultMessage:"type最大只能为3"}
+                 * 第二个：ObjectError{objectName："addCategoryReq",field:"parentId",defaultMessage:"parentId不能为null"}
+                 */
+                String message = objectError.getDefaultMessage();
+                list.add(message);
+            }
+        }
+        if (list.size() == 0) {
+            return ApiRestResponse.error(MyMallExceptionEnum.REQUEST_PARAM_ERROR);
+        }
+        return ApiRestResponse.error(MyMallExceptionEnum.REQUEST_PARAM_ERROR.getCode(), list.toString());
     }
 }

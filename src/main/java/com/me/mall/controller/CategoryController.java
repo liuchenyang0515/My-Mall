@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 /**
  * 描述：目录Controller
@@ -42,11 +43,8 @@ public class CategoryController {
      */
     @PostMapping("admin/category/add")
     @ResponseBody
-    public ApiRestResponse addCategory(HttpSession session, @RequestBody AddCategoryReq addCategoryReq) {
-        if (addCategoryReq.getName() == null || addCategoryReq.getType() == null ||
-                addCategoryReq.getParentId() == null || addCategoryReq.getOrderNum() == null) {
-            return ApiRestResponse.error(MyMallExceptionEnum.PARAM_NOT_NULL);
-        }
+    public ApiRestResponse addCategory(HttpSession session,
+                                       @Valid @RequestBody AddCategoryReq addCategoryReq) {
         User currentUser = (User) session.getAttribute(Constant.MY_MALL_USER);
         if (currentUser == null) {
             return ApiRestResponse.error(MyMallExceptionEnum.NEED_LOGIN);
