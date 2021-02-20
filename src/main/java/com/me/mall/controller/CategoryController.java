@@ -7,6 +7,7 @@ import com.me.mall.model.pojo.User;
 import com.me.mall.model.request.AddCategoryReq;
 import com.me.mall.service.CategoryService;
 import com.me.mall.service.UserService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,6 +42,7 @@ public class CategoryController {
      * @param addCategoryReq
      * @return
      */
+    @ApiOperation("后台添加目录") // 这个注解是在swagger-ui上方便查看接口api的注释
     @PostMapping("admin/category/add")
     @ResponseBody
     public ApiRestResponse addCategory(HttpSession session,
