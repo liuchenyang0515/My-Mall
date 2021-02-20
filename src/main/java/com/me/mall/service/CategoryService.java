@@ -1,5 +1,6 @@
 package com.me.mall.service;
 
+import com.me.mall.model.pojo.Category;
 import com.me.mall.model.request.AddCategoryReq;
 
 /**
@@ -7,4 +8,6 @@ import com.me.mall.model.request.AddCategoryReq;
  */
 public interface CategoryService {
     void add(AddCategoryReq addCategoryReq);
+
+    void update(Category updateCategory);
 }

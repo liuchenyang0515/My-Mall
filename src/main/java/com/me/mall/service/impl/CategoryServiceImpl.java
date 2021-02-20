@@ -37,4 +37,19 @@ public class CategoryServiceImpl implements CategoryService {
             throw new MyMallException(MyMallExceptionEnum.CREATE_FAILED);
         }
     }
+
+    @Override
+    public void update(Category updateCategory) {
+        if (updateCategory.getName() != null) {
+            Category categoryOld = categoryMapper.selectByName(updateCategory.getName());
+            // 名字一样，但是id不一样，那么就冲突了
+            if (categoryOld != null && !categoryOld.getId().equals(updateCategory.getId())) {
+                throw new MyMallException(MyMallExceptionEnum.NAME_EXISTED);
+            }
+        }
+        int count = categoryMapper.updateByPrimaryKeySelective(updateCategory);
+        if (count == 0) {
+            throw new MyMallException(MyMallExceptionEnum.UPDATE_FAILED);
+        }
+    }
 }
