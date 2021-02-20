@@ -120,4 +120,11 @@ public class CategoryController {
             return ApiRestResponse.error(MyMallExceptionEnum.NEED_ADMIN);
         }
     }
+
+    @ApiOperation("后台删除目录") // 这个注解是在swagger-ui上方便查看接口api的注释
+    @PostMapping("admin/category/delete")
+    @ResponseBody
+    public ApiRestResponse deleteCategory() {
+        return null;
+    }
 }
