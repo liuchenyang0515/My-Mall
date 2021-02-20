@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
- * 描述：AddCategoryReq请求参数封装类
+ * 描述：UpdateCategoryReq请求参数封装类
  */
 public class UpdateCategoryReq {
     @NotNull(message = "id不能为null")
@@ -16,14 +16,6 @@ public class UpdateCategoryReq {
     private Integer type;
     private Integer parentId;
     private Integer orderNum;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
