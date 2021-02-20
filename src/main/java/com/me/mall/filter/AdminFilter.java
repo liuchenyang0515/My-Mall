@@ -1,12 +1,8 @@
 package com.me.mall.filter;
 
-import com.me.mall.common.ApiRestResponse;
 import com.me.mall.common.Constant;
-import com.me.mall.exception.MyMallExceptionEnum;
-import com.me.mall.model.pojo.Category;
 import com.me.mall.model.pojo.User;
 import com.me.mall.service.UserService;
-import org.springframework.beans.BeanUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.*;
