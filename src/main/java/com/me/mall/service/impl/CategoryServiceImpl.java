@@ -1,15 +1,21 @@
 package com.me.mall.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.me.mall.common.ApiRestResponse;
 import com.me.mall.exception.MyMallException;
 import com.me.mall.exception.MyMallExceptionEnum;
 import com.me.mall.model.dao.CategoryMapper;
 import com.me.mall.model.pojo.Category;
 import com.me.mall.model.request.AddCategoryReq;
+import com.me.mall.model.vo.CategoryVO;
 import com.me.mall.service.CategoryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 描述：目录分类实现类
@@ -51,5 +57,27 @@ public class CategoryServiceImpl implements CategoryService {
         if (count == 0) {
             throw new MyMallException(MyMallExceptionEnum.UPDATE_FAILED);
         }
+    }
+
+    @Override
+    public void delete(Integer id) {
+        Category categoryOld = categoryMapper.selectByPrimaryKey(id);
+        // 查不到记录，无法删除，删除失败
+        if (categoryOld == null) {
+            throw new MyMallException(MyMallExceptionEnum.DELETE_FAILED);
+        }
+        int count = categoryMapper.deleteByPrimaryKey(id);
+        if (count == 0) {
+            throw new MyMallException(MyMallExceptionEnum.DELETE_FAILED);
+        }
+    }
+
+    @Override
+    public PageInfo listForAdmin(Integer pageNum,
+                                 Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize, "type, order_num");
+        List<Category> categoryList = categoryMapper.selectList();
+        PageInfo pageInfo = new PageInfo(categoryList);
+        return pageInfo;
     }
 }

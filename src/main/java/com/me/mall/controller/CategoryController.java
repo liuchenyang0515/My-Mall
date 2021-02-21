@@ -1,5 +1,6 @@
 package com.me.mall.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.me.mall.common.ApiRestResponse;
 import com.me.mall.common.Constant;
 import com.me.mall.exception.MyMallExceptionEnum;
@@ -14,6 +15,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
@@ -124,7 +126,39 @@ public class CategoryController {
     @ApiOperation("后台删除目录") // 这个注解是在swagger-ui上方便查看接口api的注释
     @PostMapping("admin/category/delete")
     @ResponseBody
-    public ApiRestResponse deleteCategory() {
-        return null;
+    public ApiRestResponse deleteCategory(@RequestParam Integer id) {
+        categoryService.delete(id);
+        return ApiRestResponse.success();
+    }
+
+    /**
+     * pageNum=1&pageSize=10
+     * 数据示范
+     * RESPONSE: {"status":10000,"msg":"SUCCESS","data":{"total":19,"list":[{"id":3,"name":"新鲜水果",
+     * "type":1,"parentId":0,"orderNum":1,"createTime":1576603020000,"updateTime":1577524286000},
+     * {"id":5,"name":"海鲜水产","type":1,"parentId":0,"orderNum":2,"createTime":1576603020000,"updateTime":1577521520000},
+     * {"id":6,"name":"精选肉类","type":1,"parentId":0,"orderNum":3,"createTime":1576603020000,"updateTime":1577521521000},
+     * {"id":9,"name":"冷饮冻食","type":1,"parentId":0,"orderNum":4,"createTime":1576820728000,"updateTime":1577521522000},
+     * {"id":10,"name":"蔬菜蛋品","type":1,"parentId":0,"orderNum":5,"createTime":1576820728000,"updateTime":1577521523000},
+     * {"id":27,"name":"美味菌菇","type":1,"parentId":0,"orderNum":7,"createTime":1576820728000,"updateTime":1581348036000},
+     * {"id":4,"name":"橘子橙子","type":2,"parentId":3,"orderNum":1,"createTime":1576603020000,"updateTime":1577521510000},
+     * {"id":7,"name":"螃蟹","type":2,"parentId":5,"orderNum":1,"createTime":1576603020000,"updateTime":1577521515000},
+     * {"id":16,"name":"牛羊肉","type":2,"parentId":6,"orderNum":1,"createTime":1576603020000,"updateTime":1577521518000},
+     * {"id":17,"name":"冰淇淋","type":2,"parentId":9,"orderNum":1,"createTime":1576603020000,"updateTime":1577521518000}],
+     * "pageNum":1,"pageSize":10,"size":10,"startRow":1,"endRow":10,"pages":2,"prePage":0,"nextPage":2,
+     * "isFirstPage":true,"isLastPage":false,"hasPreviousPage":false,"hasNextPage":true,"navigatePages":8,
+     * "navigatepageNums":[1,2],"navigateFirstPage":1,"navigateLastPage":2}}
+     *
+     * @param pageNum 第几页
+     * @param pageSize 每页有多少数据
+     * @return 通用返回对象
+     */
+    @ApiOperation("后台目录列表") // 这个注解是在swagger-ui上方便查看接口api的注释
+    @PostMapping("admin/category/list")
+    @ResponseBody
+    public ApiRestResponse listCategoryForAdmin(@RequestParam Integer pageNum,
+                                                @RequestParam Integer pageSize) {
+        PageInfo pageInfo = categoryService.listForAdmin(pageNum, pageSize);
+        return ApiRestResponse.success(pageInfo);
     }
 }

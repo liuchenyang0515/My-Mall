@@ -2,6 +2,8 @@ package com.me.mall.model.dao;
 
 import com.me.mall.model.pojo.Category;
 
+import java.util.List;
+
 public interface CategoryMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -16,4 +18,6 @@ public interface CategoryMapper {
     int updateByPrimaryKey(Category record);
 
     Category selectByName(String Name);
+
+    List<Category> selectList();
 }
