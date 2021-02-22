@@ -1,11 +1,15 @@
 package com.me.mall.model.vo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-// plain ordinary java object与表结构对应
-public class CategoryVO {
+// Cannot serialize; nested exception is org.springframework.core.serializer.support.SerializationFailedException:
+// Failed to serialize object using DefaultSerializer;
+// nested exception is java.io.NotSerializableException: com.me.mall.model.vo.CategoryVO
+// 如果没有实现Serializable接口，那么就不能存到序列化后存到缓存里，直接报错
+public class CategoryVO implements Serializable {
     private Integer id;
 
     private String name;

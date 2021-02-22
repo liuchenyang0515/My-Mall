@@ -10,6 +10,7 @@ import com.me.mall.model.request.AddCategoryReq;
 import com.me.mall.model.vo.CategoryVO;
 import com.me.mall.service.CategoryService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -81,7 +82,22 @@ public class CategoryServiceImpl implements CategoryService {
         return pageInfo;
     }
 
+    /**
+     * 可以在这里打断点查看第二次后走不走这个断点或者看redis数据库
+     * 127.0.0.1:6379> keys *
+     * 1) "listCategoryForCustomer::SimpleKey []"
+     * 在30s内可以看到redis有数据
+     * 过了30s后
+     * 127.0.0.1:6379> keys *
+     * (empty list or set)
+     * <p>
+     * 对于访问量大的接口和常用的接口
+     * 利用springboot整合redis整合cache做法大大提高访问速度
+     *
+     * @return
+     */
     @Override
+    @Cacheable(value = "listCategoryForCustomer")
     public List<CategoryVO> listCategoryForCustomer() {
         ArrayList<CategoryVO> categoryVOList = new ArrayList<>();
         recursivelyFindCategories(categoryVOList, 0);
