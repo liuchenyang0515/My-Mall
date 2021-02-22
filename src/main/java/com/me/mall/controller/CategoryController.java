@@ -8,6 +8,7 @@ import com.me.mall.model.pojo.Category;
 import com.me.mall.model.pojo.User;
 import com.me.mall.model.request.AddCategoryReq;
 import com.me.mall.model.request.UpdateCategoryReq;
+import com.me.mall.model.vo.CategoryVO;
 import com.me.mall.service.CategoryService;
 import com.me.mall.service.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 描述：目录Controller
@@ -149,7 +151,7 @@ public class CategoryController {
      * "isFirstPage":true,"isLastPage":false,"hasPreviousPage":false,"hasNextPage":true,"navigatePages":8,
      * "navigatepageNums":[1,2],"navigateFirstPage":1,"navigateLastPage":2}}
      *
-     * @param pageNum 第几页
+     * @param pageNum  第几页
      * @param pageSize 每页有多少数据
      * @return 通用返回对象
      */
@@ -160,5 +162,38 @@ public class CategoryController {
                                                 @RequestParam Integer pageSize) {
         PageInfo pageInfo = categoryService.listForAdmin(pageNum, pageSize);
         return ApiRestResponse.success(pageInfo);
+    }
+
+    /***
+     * 这里需要一步步调试，方便观察逻辑步骤
+     * RESPONSE: {"status":10000,"msg":"SUCCESS","data":[
+     * {"id":3,"name":"新鲜水果","type":1,"parentId":0,"orderNum":1,"createTime":1576603020000,"updateTime":1577524286000,
+     * "childCategory":[{"id":4,"name":"橘子橙子","type":2,"parentId":3,"orderNum":1,"createTime":1576603020000,"updateTime":1577521510000,
+     * "childCategory":[{"id":19,"name":"果冻橙","type":3,"parentId":4,"orderNum":1,"createTime":1576603020000,"updateTime":1581352622000,
+     * "childCategory":[]}]},
+     * {"id":11,"name":"草莓","type":2,"parentId":3,"orderNum":2,"createTime":1576603020000,"updateTime":1577519082000,"childCategory":[]},
+     * {"id":12,"name":"奇异果","type":2,"parentId":3,"orderNum":3,"createTime":1576603020000,"updateTime":1577521512000,"childCategory":[]},
+     * {"id":14,"name":"车厘子","type":2,"parentId":3,"orderNum":4,"createTime":1576603020000,"updateTime":1577521512000,"childCategory":[]},
+     * {"id":28,"name":"其他水果","type":2,"parentId":3,"orderNum":4,"createTime":1576603020000,"updateTime":1577521512000,"childCategory":[]}]},
+     * {"id":5,"name":"海鲜水产","type":1,"parentId":0,"orderNum":2,"createTime":1576603020000,"updateTime":1577521520000,
+     * "childCategory":[{"id":7,"name":"螃蟹","type":2,"parentId":5,"orderNum":1,"createTime":1576603020000,"updateTime":1577521515000,"childCategory":[]},
+     * {"id":8,"name":"鱼类","type":2,"parentId":5,"orderNum":2,"createTime":1576603020000,"updateTime":1577521516000,"childCategory":[]},
+     * {"id":13,"name":"海参","type":2,"parentId":5,"orderNum":3,"createTime":1576603020000,"updateTime":1577521517000,"childCategory":[]}]},
+     * {"id":6,"name":"精选肉类","type":1,"parentId":0,"orderNum":3,"createTime":1576603020000,"updateTime":1577521521000,
+     * "childCategory":[{"id":16,"name":"牛羊肉","type":2,"parentId":6,"orderNum":1,"createTime":1576603020000,"updateTime":1577521518000,"childCategory":[]}]},
+     * {"id":9,"name":"冷饮冻食","type":1,"parentId":0,"orderNum":4,"createTime":1576820728000,"updateTime":1577521522000,
+     * "childCategory":[{"id":17,"name":"冰淇淋","type":2,"parentId":9,"orderNum":1,"createTime":1576603020000,"updateTime":1577521518000,"childCategory":[]}]},
+     * {"id":10,"name":"蔬菜蛋品","type":1,"parentId":0,"orderNum":5,"createTime":1576820728000,"updateTime":1577521523000,
+     * "childCategory":[{"id":18,"name":"蔬菜综合","type":2,"parentId":10,"orderNum":1,"createTime":1576603020000,"updateTime":1581353307000,"childCategory":[]}]},
+     * {"id":27,"name":"美味菌菇","type":1,"parentId":0,"orderNum":7,"createTime":1576820728000,"updateTime":1581348036000,
+     * "childCategory":[{"id":15,"name":"火锅食材","type":2,"parentId":27,"orderNum":5,"createTime":1576603020000,"updateTime":1581352953000,"childCategory":[]}]}]}
+     * @return
+     */
+    @ApiOperation("前台目录列表") // 这个注解是在swagger-ui上方便查看接口api的注释
+    @PostMapping("category/list")
+    @ResponseBody
+    public ApiRestResponse listCategoryForCustomer() {
+        List<CategoryVO> categoryVOS = categoryService.listCategoryForCustomer();
+        return ApiRestResponse.success(categoryVOS);
     }
 }

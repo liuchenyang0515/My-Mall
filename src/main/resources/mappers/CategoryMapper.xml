@@ -28,6 +28,11 @@
     select <include refid="Base_Column_List"/>
     from me_mall_category
   </select>
+  <select id="selectCategoriesByParentId" parameterType="int" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from me_mall_category
+    where parent_id = #{parentId}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from me_mall_category
     where id = #{id,jdbcType=INTEGER}

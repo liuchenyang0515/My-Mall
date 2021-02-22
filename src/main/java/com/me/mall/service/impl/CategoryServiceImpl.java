@@ -2,7 +2,6 @@ package com.me.mall.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.me.mall.common.ApiRestResponse;
 import com.me.mall.exception.MyMallException;
 import com.me.mall.exception.MyMallExceptionEnum;
 import com.me.mall.model.dao.CategoryMapper;
@@ -12,9 +11,10 @@ import com.me.mall.model.vo.CategoryVO;
 import com.me.mall.service.CategoryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -79,5 +79,27 @@ public class CategoryServiceImpl implements CategoryService {
         List<Category> categoryList = categoryMapper.selectList();
         PageInfo pageInfo = new PageInfo(categoryList);
         return pageInfo;
+    }
+
+    @Override
+    public List<CategoryVO> listCategoryForCustomer() {
+        ArrayList<CategoryVO> categoryVOList = new ArrayList<>();
+        recursivelyFindCategories(categoryVOList, 0);
+        return categoryVOList;
+    }
+
+    private void recursivelyFindCategories(List<CategoryVO> categoryVOList, Integer parentId) {
+        // 递归获取所有子类别，并组合成为一个"目录树"
+        List<Category> categoryList = categoryMapper.selectCategoriesByParentId(parentId);
+        if (!CollectionUtils.isEmpty(categoryList)) {
+            for (int i = 0; i < categoryList.size(); ++i) {
+                Category category = categoryList.get(i);
+                CategoryVO categoryVO = new CategoryVO();
+                BeanUtils.copyProperties(category, categoryVO);
+                categoryVOList.add(categoryVO);
+                // 这里当前目录id作为下一次的父id，查询有没有对应的子目录
+                recursivelyFindCategories(categoryVO.getChildCategory(), categoryVO.getId());
+            }
+        }
     }
 }
