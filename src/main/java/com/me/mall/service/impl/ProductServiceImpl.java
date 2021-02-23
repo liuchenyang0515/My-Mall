@@ -37,7 +37,7 @@ public class ProductServiceImpl implements ProductService {
         if (productOld != null) {
             throw new MyMallException(MyMallExceptionEnum.NAME_EXISTED);
         }
-        int count = productMapper.insertSelective(productOld);
+        int count = productMapper.insertSelective(product);
         if (count == 0) {
             throw new MyMallException(MyMallExceptionEnum.CREATE_FAILED);
         }
@@ -45,7 +45,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ApiRestResponse upload(HttpServletRequest request, @RequestParam("file") MultipartFile file) {
-        // 获取文件的原始名字
+        // 获取文件的原始名字mihoutao2.jpg
         String originalFilename = file.getOriginalFilename();
         String suffixName = originalFilename.substring(originalFilename.lastIndexOf("."));
         // 生成文件名称UUID
@@ -68,13 +68,13 @@ public class ProductServiceImpl implements ProductService {
             e.printStackTrace();
         }
         try {
-            return ApiRestResponse.success(getHost(new URI(request.getRequestURI() + ""))
+            return ApiRestResponse.success(getHost(new URI(request.getRequestURL() + ""))
                     + "/images/" + newFileName);
         } catch (URISyntaxException e) {
             return ApiRestResponse.error(MyMallExceptionEnum.UPLOAD_FAILED);
         }
     }
-
+    // uri: "http://127.0.0.1:8083/admin/upload/file"
     private URI getHost(URI uri) {
         URI effectiveURI;
         try {
