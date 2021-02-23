@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.me.mall.common.ApiRestResponse;
 import com.me.mall.model.pojo.Product;
 import com.me.mall.model.request.AddProductReq;
+import com.me.mall.model.request.ProductListReq;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,4 +28,6 @@ public interface ProductService {
     PageInfo listForAdmin(Integer pageNum, Integer pageSize);
 
     Product detail(Integer id);
+
+    PageInfo list(ProductListReq productListReq);
 }

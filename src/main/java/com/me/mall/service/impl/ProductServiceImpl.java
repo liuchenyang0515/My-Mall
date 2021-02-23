@@ -2,13 +2,18 @@ package com.me.mall.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.github.pagehelper.util.StringUtil;
 import com.me.mall.common.ApiRestResponse;
 import com.me.mall.common.Constant;
 import com.me.mall.exception.MyMallException;
 import com.me.mall.exception.MyMallExceptionEnum;
 import com.me.mall.model.dao.ProductMapper;
 import com.me.mall.model.pojo.Product;
+import com.me.mall.model.query.ProductListQuery;
 import com.me.mall.model.request.AddProductReq;
+import com.me.mall.model.request.ProductListReq;
+import com.me.mall.model.vo.CategoryVO;
+import com.me.mall.service.CategoryService;
 import com.me.mall.service.ProductService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -21,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +37,8 @@ import java.util.UUID;
 public class ProductServiceImpl implements ProductService {
     @Resource
     private ProductMapper productMapper;
+    @Resource
+    private CategoryService categoryService;
 
     @Override
     public void add(AddProductReq addProductReq) {
@@ -134,5 +142,50 @@ public class ProductServiceImpl implements ProductService {
     public Product detail(Integer id) {
         Product product = productMapper.selectByPrimaryKey(id);
         return product;
+    }
+
+    @Override
+    public PageInfo list(ProductListReq productListReq) {
+        // 构建Query对象
+        ProductListQuery productListQuery = new ProductListQuery();
+        // 搜索处理
+        if (!StringUtil.isEmpty(productListReq.getKeyword())) {
+            String keyword = new StringBuilder().append("%").
+                    append(productListReq.getKeyword()).
+                    append("%").toString(); // 为了数据库的模糊查找
+            productListQuery.setKeyword(keyword);
+        }
+        /* 目录处理：如果查某个目录下的商品，不仅是需要查出该目录下的，还要把所有
+        子目录的所有商品都查出来，所以要拿到一个目录id的List */
+        if (productListReq.getCategoryId() != null) {
+            // 拿到productListReq.getCategoryId()的id对应目录，以该目录为根节点，包括下面所有子目录信息
+            List<CategoryVO> categoryVOList = categoryService.listCategoryForCustomer(productListReq.getCategoryId());
+            ArrayList<Integer> categoryIds = new ArrayList<>();
+            categoryIds.add(productListReq.getCategoryId());
+            getCategoryIds(categoryVOList, categoryIds);
+            productListQuery.setCategoryIds(categoryIds);
+        }
+
+        // 排序处理
+        String orderBy = productListReq.getOrderBy();
+        if (Constant.ProductListOrderBy.PRICE_ASC_DESC.contains(orderBy)) {
+            PageHelper.startPage(productListReq.getPageNum(), productListReq.getPageSize(), orderBy);
+        } else {
+            PageHelper.startPage(productListReq.getPageNum(), productListReq.getPageSize());
+        }
+
+        List<Product> productList = productMapper.selectList(productListQuery);
+        PageInfo<Product> pageInfo = new PageInfo<>(productList);
+        return pageInfo;
+    }
+
+    private void getCategoryIds(List<CategoryVO> categoryVOList, ArrayList<Integer> categoryIds) {
+        for (int i = 0; i < categoryVOList.size(); ++i) {
+            CategoryVO categoryVO = categoryVOList.get(i);
+            if (categoryVO != null) {
+                categoryIds.add(categoryVO.getId());
+                getCategoryIds(categoryVO.getChildCategory(), categoryIds);
+            }
+        }
     }
 }
