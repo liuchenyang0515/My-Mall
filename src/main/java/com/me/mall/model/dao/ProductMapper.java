@@ -3,6 +3,8 @@ package com.me.mall.model.dao;
 import com.me.mall.model.pojo.Product;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 public interface ProductMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -19,4 +21,6 @@ public interface ProductMapper {
     Product selectByName(String name);
 
     int batchUpdateSellStatus(@Param("ids") Integer[] ids, @Param("sellStatus") Integer sellStatus);
+
+    List<Product> selectListForAdmin();
 }

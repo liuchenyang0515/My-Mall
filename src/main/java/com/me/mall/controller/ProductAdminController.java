@@ -1,5 +1,6 @@
 package com.me.mall.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.me.mall.common.ApiRestResponse;
 import com.me.mall.model.pojo.Product;
 import com.me.mall.model.request.AddProductReq;
@@ -55,7 +56,8 @@ public class ProductAdminController {
     /**
      * 比如让id为2、3的商品下架，就是让他们的status由1变为0
      * ids=2,3&sellStatus=0
-     * @param ids 需要下架的商品
+     *
+     * @param ids        需要下架的商品
      * @param sellStatus 0-下架  1-上架
      * @return
      */
@@ -64,5 +66,12 @@ public class ProductAdminController {
     public ApiRestResponse batchUpdateSellStatus(@RequestParam Integer[] ids, @RequestParam Integer sellStatus) {
         productService.batchUpdateSellStatus(ids, sellStatus);
         return ApiRestResponse.success();
+    }
+
+    @ApiOperation("后台商品列表接口")
+    @PostMapping("admin/product/list")
+    public ApiRestResponse list(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+        PageInfo pageInfo = productService.listForAdmin(pageNum, pageSize);
+        return ApiRestResponse.success(pageInfo);
     }
 }

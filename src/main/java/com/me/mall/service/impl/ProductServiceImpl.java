@@ -1,5 +1,7 @@
 package com.me.mall.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.me.mall.common.ApiRestResponse;
 import com.me.mall.common.Constant;
 import com.me.mall.exception.MyMallException;
@@ -19,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -117,5 +120,19 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void batchUpdateSellStatus(Integer[] ids, Integer sellStatus) {
         productMapper.batchUpdateSellStatus(ids, sellStatus);
+    }
+
+    @Override
+    public PageInfo listForAdmin(Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Product> products = productMapper.selectListForAdmin();
+        PageInfo<Product> pageInfo = new PageInfo<>(products);
+        return pageInfo;
+    }
+
+    @Override
+    public Product detail(Integer id) {
+        Product product = productMapper.selectByPrimaryKey(id);
+        return product;
     }
 }
