@@ -74,6 +74,7 @@ public class ProductServiceImpl implements ProductService {
             return ApiRestResponse.error(MyMallExceptionEnum.UPLOAD_FAILED);
         }
     }
+
     // uri: "http://127.0.0.1:8083/admin/upload/file"
     private URI getHost(URI uri) {
         URI effectiveURI;
@@ -85,5 +86,31 @@ public class ProductServiceImpl implements ProductService {
             effectiveURI = null;
         }
         return effectiveURI;
+    }
+
+    @Override
+    public void update(Product updateProduct) {
+        Product productOld = productMapper.selectByName(updateProduct.getName());
+        // 同名且不同id，不能继续修改
+        if (productOld != null && !productOld.getId().equals(updateProduct.getId())) {
+            throw new MyMallException(MyMallExceptionEnum.NAME_EXISTED);
+        }
+        int count = productMapper.updateByPrimaryKeySelective(updateProduct);
+        if (count == 0) {
+            throw new MyMallException(MyMallExceptionEnum.UPDATE_FAILED);
+        }
+    }
+
+    @Override
+    public void delete(Integer id) {
+        Product productOld = productMapper.selectByPrimaryKey(id);
+        // 查不到该记录，无法删除
+        if (productOld == null) {
+            throw new MyMallException(MyMallExceptionEnum.DELETE_FAILED);
+        }
+        int count = productMapper.deleteByPrimaryKey(id);
+        if (count == 0) {
+            throw new MyMallException(MyMallExceptionEnum.DELETE_FAILED);
+        }
     }
 }
