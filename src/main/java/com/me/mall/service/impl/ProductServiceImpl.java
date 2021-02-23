@@ -113,4 +113,9 @@ public class ProductServiceImpl implements ProductService {
             throw new MyMallException(MyMallExceptionEnum.DELETE_FAILED);
         }
     }
+
+    @Override
+    public void batchUpdateSellStatus(Integer[] ids, Integer sellStatus) {
+        productMapper.batchUpdateSellStatus(ids, sellStatus);
+    }
 }

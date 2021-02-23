@@ -51,4 +51,18 @@ public class ProductAdminController {
         productService.delete(id);
         return ApiRestResponse.success();
     }
+
+    /**
+     * 比如让id为2、3的商品下架，就是让他们的status由1变为0
+     * ids=2,3&sellStatus=0
+     * @param ids 需要下架的商品
+     * @param sellStatus 0-下架  1-上架
+     * @return
+     */
+    @ApiOperation("后台批量上下架接口")
+    @PostMapping("admin/product/batchUpdateSellStatus")
+    public ApiRestResponse batchUpdateSellStatus(@RequestParam Integer[] ids, @RequestParam Integer sellStatus) {
+        productService.batchUpdateSellStatus(ids, sellStatus);
+        return ApiRestResponse.success();
+    }
 }
