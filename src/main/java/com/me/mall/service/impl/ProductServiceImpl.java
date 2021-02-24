@@ -162,6 +162,7 @@ public class ProductServiceImpl implements ProductService {
             List<CategoryVO> categoryVOList = categoryService.listCategoryForCustomer(productListReq.getCategoryId());
             ArrayList<Integer> categoryIds = new ArrayList<>();
             categoryIds.add(productListReq.getCategoryId());
+            // 以根节点为id的树，将这棵树中所有节点的id添加到categoryIds列表
             getCategoryIds(categoryVOList, categoryIds);
             productListQuery.setCategoryIds(categoryIds);
         }
@@ -169,13 +170,14 @@ public class ProductServiceImpl implements ProductService {
         // 排序处理
         String orderBy = productListReq.getOrderBy();
         if (Constant.ProductListOrderBy.PRICE_ASC_DESC.contains(orderBy)) {
+            // 包含价格升降序的时候
             PageHelper.startPage(productListReq.getPageNum(), productListReq.getPageSize(), orderBy);
         } else {
             PageHelper.startPage(productListReq.getPageNum(), productListReq.getPageSize());
         }
-
+        //  如果有keyword，数据库进行模糊查询，比如parentId=3的记录结点和子结点，包含keyword="橙"的记录
         List<Product> productList = productMapper.selectList(productListQuery);
-        PageInfo<Product> pageInfo = new PageInfo<>(productList);
+        PageInfo<Product> pageInfo = new PageInfo<>(productList); // 包装PageInfo对象
         return pageInfo;
     }
 
