@@ -19,6 +19,12 @@
     from me_mall_cart
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="selectCartByUserIdAndProductId" resultMap="BaseResultMap" parameterType="map">
+    select <include refid="Base_Column_List" />
+    from me_mall_cart
+    where user_id = #{userId}
+    and product_id = #{productId}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from me_mall_cart
     where id = #{id,jdbcType=INTEGER}
