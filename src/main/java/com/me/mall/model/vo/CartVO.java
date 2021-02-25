@@ -2,6 +2,7 @@ package com.me.mall.model.vo;
 
 /**
  * 描述：CartVO,给前端展示用
+ * 并没有哪个数据库直接赋值，而是利用表连接，可以对想要的字段一个个的赋值，供前端使用
  */
 public class CartVO {
     private Integer id;

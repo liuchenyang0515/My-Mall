@@ -85,7 +85,7 @@ public class CartServiceImpl implements CartService {
 //        validProduct(productId, count);
         Cart cart = cartMapper.selectCartByUserIdAndProductId(userId, productId);
         if (cart == null) { // 没查到
-            // 这个商品之前不再购物车，无法更新
+            // 这个商品之前不在购物车，无法更新
             throw new MyMallException(MyMallExceptionEnum.UPDATE_FAILED);
         } else {
             Cart cartNew = new Cart();
@@ -105,12 +105,30 @@ public class CartServiceImpl implements CartService {
     public List<CartVO> delete(Integer userId, Integer productId) {
         Cart cart = cartMapper.selectCartByUserIdAndProductId(userId, productId);
         if (cart == null) { // 没查到
-            // 这个商品之前不再购物车，无法删除
+            // 这个商品之前不在购物车，无法删除
             throw new MyMallException(MyMallExceptionEnum.DELETE_FAILED);
         } else {
             // 这个商品已经在购物车了，则可以删除
             cartMapper.deleteByPrimaryKey(cart.getId());
         }
+        return this.list(userId);
+    }
+
+    @Override
+    public List<CartVO> selectOrNot(Integer userId, Integer productId, Integer selected) {
+        Cart cart = cartMapper.selectCartByUserIdAndProductId(userId, productId);
+        if (cart == null) {
+            // 这个商品之前不在购物车，无法选中或者不选中
+            throw new MyMallException(MyMallExceptionEnum.UPDATE_FAILED);
+        } else {
+            cartMapper.selectOrNot(userId, productId, selected);
+        }
+        return this.list(userId);
+    }
+
+    @Override
+    public List<CartVO> selectAllOrNot(Integer userId, Integer selected) {
+        cartMapper.selectOrNot(userId, null, selected); // 调用cartMapper的方法，不是调用上面一个方法
         return this.list(userId);
     }
 }

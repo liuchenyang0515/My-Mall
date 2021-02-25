@@ -134,4 +134,13 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <update id="selectOrNot" parameterType="map">
+    update me_mall_cart
+    set selected = #{selected}
+    where user_id = #{userId}
+    <if test="productId != null">
+      <!-- 如果productId为null，就更新购物车所有商品状态为selected -->
+      and product_id = #{productId}
+    </if>
+  </update>
 </mapper>

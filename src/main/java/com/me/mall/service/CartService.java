@@ -19,4 +19,8 @@ public interface CartService {
 
     // 更新主要是更新数量
     List<CartVO> delete(Integer userId, Integer productId);
+
+    List<CartVO> selectOrNot(Integer userId, Integer productId, Integer selected);
+
+    List<CartVO> selectAllOrNot(Integer userId, Integer selected);
 }
