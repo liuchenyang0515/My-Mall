@@ -18,7 +18,7 @@ public interface CartMapper {
     int updateByPrimaryKeySelective(Cart record);
 
     int updateByPrimaryKey(Cart record);
-    // 根据用户ID和商品ID可以确定唯一的购物车
+    // 根据用户ID可以确定唯一的购物车，商品ID可以确定购物车里有没有这件商品
     Cart selectCartByUserIdAndProductId(@Param("userId") Integer userId, @Param("productId") Integer productId);
 
     List<CartVO> selectList(@Param("userId") Integer userId);

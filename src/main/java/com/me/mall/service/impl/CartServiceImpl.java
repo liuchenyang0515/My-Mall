@@ -77,4 +77,40 @@ public class CartServiceImpl implements CartService {
             throw new MyMallException(MyMallExceptionEnum.NOT_ENOUGH);
         }
     }
+
+
+    @Override
+    // 更新主要是更新数量
+    public List<CartVO> update(Integer userId, Integer productId, Integer count) {
+//        validProduct(productId, count);
+        Cart cart = cartMapper.selectCartByUserIdAndProductId(userId, productId);
+        if (cart == null) { // 没查到
+            // 这个商品之前不再购物车，无法更新
+            throw new MyMallException(MyMallExceptionEnum.UPDATE_FAILED);
+        } else {
+            Cart cartNew = new Cart();
+            cartNew.setQuantity(count);
+            cartNew.setId(cart.getId());
+            cartNew.setProductId(cart.getProductId());
+            cartNew.setUserId(cart.getUserId());
+            cartNew.setSelected(Constant.Cart.CHECKED); // 点击新增商品，一般是想买，默认勾选
+            cartMapper.updateByPrimaryKeySelective(cartNew);
+        }
+        return this.list(userId);
+    }
+
+
+    @Override
+    // 删除购物车
+    public List<CartVO> delete(Integer userId, Integer productId) {
+        Cart cart = cartMapper.selectCartByUserIdAndProductId(userId, productId);
+        if (cart == null) { // 没查到
+            // 这个商品之前不再购物车，无法删除
+            throw new MyMallException(MyMallExceptionEnum.DELETE_FAILED);
+        } else {
+            // 这个商品已经在购物车了，则可以删除
+            cartMapper.deleteByPrimaryKey(cart.getId());
+        }
+        return this.list(userId);
+    }
 }
