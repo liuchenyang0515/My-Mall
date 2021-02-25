@@ -9,6 +9,8 @@ import java.util.List;
  */
 public interface CartService {
 
+    List<CartVO> list(Integer userId);
+
     // 直接返回CartVO列表获得购物车内容，避免再次发送请求
     List<CartVO> add(Integer userId, Integer productId, Integer count);
 }

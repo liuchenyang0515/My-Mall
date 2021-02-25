@@ -28,6 +28,17 @@ public class CartServiceImpl implements CartService {
     private CartMapper cartMapper;
 
     @Override
+    public List<CartVO> list(Integer userId) {
+        List<CartVO> cartVOS = cartMapper.selectList(userId); // 得到拼装好的VO对象列表
+        for (int i = 0; i < cartVOS.size(); ++i) {
+            CartVO cartVO = cartVOS.get(i);
+            cartVO.setTotalPrice(cartVO.getPrice() * cartVO.getQuantity());
+        }
+        return cartVOS;
+    }
+
+
+    @Override
     // 直接返回CartVO列表获得购物车内容，避免再次发送请求
     public List<CartVO> add(Integer userId, Integer productId, Integer count) {
 //        validProduct(productId, count);
@@ -51,7 +62,7 @@ public class CartServiceImpl implements CartService {
             cartNew.setSelected(Constant.Cart.CHECKED); // 点击新增商品，一般是想买，默认勾选
             cartMapper.updateByPrimaryKeySelective(cartNew);
         }
-        return null;
+        return this.list(userId);
     }
 
     // 校验对应商品状态，是否存在、上架以及库存量，判断是否可以完成购买
