@@ -22,6 +22,12 @@ public class CartController {
     @Resource
     private CartService cartService;
 
+    /**
+     * 获得的购物车列表List<CartVO>，CartVO对象的属性是为了提供给前端，并不是某一个数据库数据直接注入的。
+     * 是购物车表me_mall_cart和商品表me_mall_product做表连接之后自己选择性返回的字段数据注入到CartVO实体类
+     *
+     * @return
+     */
     @ApiOperation("购物车列表")
     @PostMapping("/list")
     public ApiRestResponse list() {
@@ -34,8 +40,8 @@ public class CartController {
      * 这里利用接口可以添加不存在的商品，但是在显示购物车列表的时候，因为表连接的条件me_mall_product p on p.id = c.product_id，
      * 购物车cart表的商品在商品product表不存在，就过滤掉了
      *
-     * @param productId
-     * @param count
+     * @param productId 商品id
+     * @param count 商品数量
      * @return
      */
     @ApiOperation("添加商品到购物车")
@@ -46,6 +52,12 @@ public class CartController {
         return ApiRestResponse.success(cartVOList);
     }
 
+    /**
+     * 查询购物车有没有这件商品，如果有，就进行数量上的更新
+     * @param productId
+     * @param count
+     * @return
+     */
     @ApiOperation("更新购物车")
     @PostMapping("/update")
     public ApiRestResponse update(@RequestParam Integer productId, @RequestParam Integer count) {

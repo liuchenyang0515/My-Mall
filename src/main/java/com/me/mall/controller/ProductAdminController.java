@@ -26,6 +26,15 @@ public class ProductAdminController {
     @Resource
     private ProductService productService;
 
+    /**
+     * 比如127.0.0.1:8083/admin/product/add的url中的Body添加
+     * {"name":"新鲜猕猴桃","categoryId":5,"price":1000,"stock":10,"status":1,"detail":"新西兰黄心，黄金奇异果",
+     * "image":"http://127.0.0.1:8083/images/6037baf8-5251-4560-be5a-32b8ee3823cf.png"}
+     * 那么就会对应添加到AddProductReq对象中，各个属性自动注入。
+     * 最后数据insert成功，me_mall_product表会多出这条数据
+     * @param addProductReq
+     * @return
+     */
     @PostMapping("admin/product/add")
     public ApiRestResponse addProduct(@Valid @RequestBody AddProductReq addProductReq) {
         productService.add(addProductReq);

@@ -43,7 +43,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void add(AddProductReq addProductReq) {
         Product product = new Product();
-        BeanUtils.copyProperties(addProductReq, product);
+        BeanUtils.copyProperties(addProductReq, product); // 除了id和create_time、update_time之外的属性都被复制
         Product productOld = productMapper.selectByName(addProductReq.getName());
         if (productOld != null) {
             throw new MyMallException(MyMallExceptionEnum.NAME_EXISTED);
