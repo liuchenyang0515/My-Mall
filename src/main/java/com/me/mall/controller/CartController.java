@@ -25,7 +25,7 @@ public class CartController {
     /**
      * 获得的购物车列表List<CartVO>，CartVO对象的属性是为了提供给前端，并不是某一个数据库数据直接注入的。
      * 是购物车表me_mall_cart和商品表me_mall_product做表连接之后自己选择性返回的字段数据注入到CartVO实体类
-     *
+     * 获取的是某个用户购物车有效的商品(商品存在且未下架)
      * @return
      */
     @ApiOperation("购物车列表")

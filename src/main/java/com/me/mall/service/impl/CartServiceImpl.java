@@ -28,6 +28,7 @@ public class CartServiceImpl implements CartService {
     private CartMapper cartMapper;
 
     @Override
+    // 获取的是某个用户购物车有效的商品(商品存在且未下架)
     public List<CartVO> list(Integer userId) {
         List<CartVO> cartVOS = cartMapper.selectList(userId); // 得到拼装好的VO对象列表
         for (int i = 0; i < cartVOS.size(); ++i) {
