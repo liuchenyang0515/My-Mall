@@ -5,6 +5,8 @@ import com.me.mall.exception.MyMallException;
 import com.me.mall.exception.MyMallExceptionEnum;
 import com.me.mall.filter.UserFilter;
 import com.me.mall.model.dao.CartMapper;
+import com.me.mall.model.dao.OrderItemMapper;
+import com.me.mall.model.dao.OrderMapper;
 import com.me.mall.model.dao.ProductMapper;
 import com.me.mall.model.pojo.Order;
 import com.me.mall.model.pojo.OrderItem;
@@ -32,7 +34,12 @@ public class OrderServiceImpl implements OrderService {
     private ProductMapper productMapper;
     @Resource
     private CartMapper cartMapper;
+    @Resource
+    private OrderMapper orderMapper;
+    @Resource
+    private OrderItemMapper orderItemMapper;
 
+    @Override
     public String create(CreateOrderReq createOrderReq) {
         // 拿到用户ID
         Integer userId = UserFilter.currentUser.getId();
@@ -72,10 +79,33 @@ public class OrderServiceImpl implements OrderService {
         // 生成订单号,有独立的规则
         String orderNo = OrderCodeFactory.getOrderCode(Long.valueOf(userId));
         order.setOrderNo(orderNo);
+        order.setUserId(userId);
+        order.setTotalPrice(totalPrice(orderItemList));
+        order.setReceiverName(createOrderReq.getReceiverName());
+        order.setReceiverMobile(createOrderReq.getReceiverAddress());
+        order.setReceiverAddress(createOrderReq.getReceiverAddress());
+        order.setOrderStatus(Constant.OrderStatusEnum.NOT_PAID.getCode());
+        order.setPostage(0); // 运费，默认为0
+        order.setPaymentType(1); // 支付类型,1-在线支付
+        // 插入到Order表
+        orderMapper.insertSelective(order);
         // 循环保存每个商品到order_item表
+        for (int i = 0; i < orderItemList.size(); ++i) {
+            OrderItem orderItem = orderItemList.get(i);
+            orderItem.setOrderNo(order.getOrderNo());
+            orderItemMapper.insertSelective(orderItem);
+        }
+        // 把结果返回
+        return orderNo;
+    }
 
-        //
-        return null;
+    private Integer totalPrice(List<OrderItem> orderItemList) {
+        Integer totalPrice = 0;
+        for (int i = 0; i < orderItemList.size(); ++i) {
+            OrderItem orderItem = orderItemList.get(i);
+            totalPrice += orderItem.getTotalPrice();
+        }
+        return totalPrice;
     }
 
     // 把购物车中的已勾选商品删除
