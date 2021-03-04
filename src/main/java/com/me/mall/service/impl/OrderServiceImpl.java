@@ -17,6 +17,7 @@ import com.me.mall.service.CartService;
 import com.me.mall.service.OrderService;
 import com.me.mall.util.OrderCodeFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -39,6 +40,8 @@ public class OrderServiceImpl implements OrderService {
     @Resource
     private OrderItemMapper orderItemMapper;
 
+    // 数据库事务
+    @Transactional(rollbackFor = Exception.class) // 遇到任何异常都要回滚
     @Override
     public String create(CreateOrderReq createOrderReq) {
         // 拿到用户ID
@@ -94,6 +97,7 @@ public class OrderServiceImpl implements OrderService {
             OrderItem orderItem = orderItemList.get(i);
             orderItem.setOrderNo(order.getOrderNo());
             orderItemMapper.insertSelective(orderItem);
+//            throw new MyMallException(MyMallExceptionEnum.CART_EMPTY); // 模拟没有事务时的异常数据
         }
         // 把结果返回
         return orderNo;
