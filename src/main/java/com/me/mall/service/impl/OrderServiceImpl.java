@@ -13,9 +13,12 @@ import com.me.mall.model.pojo.OrderItem;
 import com.me.mall.model.pojo.Product;
 import com.me.mall.model.request.CreateOrderReq;
 import com.me.mall.model.vo.CartVO;
+import com.me.mall.model.vo.OrderItemVO;
+import com.me.mall.model.vo.OrderVO;
 import com.me.mall.service.CartService;
 import com.me.mall.service.OrderService;
 import com.me.mall.util.OrderCodeFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -150,5 +153,39 @@ public class OrderServiceImpl implements OrderService {
                 throw new MyMallException(MyMallExceptionEnum.NOT_ENOUGH);
             }
         }
+    }
+
+    @Override
+    public OrderVO detail(String orderNo) {
+        Order order = orderMapper.selectByOrderNo(orderNo);
+        // 订单不存在，则报错
+        if (order == null) {
+            throw new MyMallException(MyMallExceptionEnum.NO_ORDER);
+        }
+        // 订单存在，需要判断所属，不能拿到别人的订单
+        Integer userId = UserFilter.currentUser.getId();
+        if (!order.getUserId().equals(userId)) {
+            throw new MyMallException(MyMallExceptionEnum.NOT_YOUR_ORDER);
+        }
+        // 目前拿到的信息不足以拼装，继续获取
+        OrderVO orderVO = getOrderVO(order);
+        return orderVO;
+    }
+
+    private OrderVO getOrderVO(Order order) {
+        OrderVO orderVO = new OrderVO();
+        BeanUtils.copyProperties(order, orderVO);
+        // 获取订单对应的orderItemVOList
+        List<OrderItem> orderItemList = orderItemMapper.selectByOrderNo(order.getOrderNo());
+        ArrayList<OrderItemVO> orderItemVOList = new ArrayList<>();
+        for (int i = 0; i < orderItemList.size(); ++i) {
+            OrderItem orderItem = orderItemList.get(i);
+            OrderItemVO orderItemVO = new OrderItemVO();
+            BeanUtils.copyProperties(orderItem, orderItemVO);
+            orderItemVOList.add(orderItemVO);
+        }
+        orderVO.setOrderItemVOList(orderItemVOList);
+        orderVO.setOrderStatusName(Constant.OrderStatusEnum.codeOf(orderVO.getOrderStatus()).getValue()); // 订单状态
+        return orderVO;
     }
 }
