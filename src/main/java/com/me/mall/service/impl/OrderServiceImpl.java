@@ -261,4 +261,14 @@ public class OrderServiceImpl implements OrderService {
         String pngAddress = "http://" + address + "/images/" + orderNo + ".png";
         return pngAddress;
     }
+
+    @Override
+    public PageInfo listForAdmin(Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Order> orderList = orderMapper.selectAllForAdmin();
+        List<OrderVO> orderVOList = orderListToOrderVOList(orderList);
+        PageInfo pageInfo = new PageInfo(orderList);
+        pageInfo.setList(orderVOList);
+        return pageInfo;
+    }
 }
