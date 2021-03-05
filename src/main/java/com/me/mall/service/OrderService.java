@@ -1,5 +1,6 @@
 package com.me.mall.service;
 
+import com.github.pagehelper.PageInfo;
 import com.me.mall.model.request.CreateOrderReq;
 import com.me.mall.model.vo.OrderVO;
 
@@ -11,4 +12,6 @@ public interface OrderService {
     String create(CreateOrderReq createOrderReq);
 
     OrderVO detail(String orderNo);
+
+    PageInfo listForCustomer(Integer pageNum, Integer pageSize);
 }
