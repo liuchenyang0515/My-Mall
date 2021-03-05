@@ -27,6 +27,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -210,5 +211,28 @@ public class OrderServiceImpl implements OrderService {
             orderVOList.add(orderVO);
         }
         return orderVOList;
+    }
+
+    @Override
+    public void cancel(String orderNo) {
+        Order order = orderMapper.selectByOrderNo(orderNo);
+        // 查不到订单，报错
+        if (order == null) {
+            throw new MyMallException(MyMallExceptionEnum.NO_ORDER);
+        }
+        // 验证用户身份
+        // 订单存在，需要判断所属，不能拿到别人的订单
+        Integer userId = UserFilter.currentUser.getId();
+        if (!order.getUserId().equals(userId)) {
+            throw new MyMallException(MyMallExceptionEnum.NOT_YOUR_ORDER);
+        }
+        // 假定只有未付款状态才能取消订单
+        if (order.getOrderStatus().equals(Constant.OrderStatusEnum.NOT_PAID.getCode())) {
+            order.setOrderStatus(Constant.OrderStatusEnum.CANCELED.getCode()); // me_mall_order表对应订单项状态码变为0
+            order.setEndTime(new Date()); //  me_mall_order表对应订单项有了结束时间
+            orderMapper.updateByPrimaryKeySelective(order);
+        } else {
+            throw new MyMallException(MyMallExceptionEnum.WRONG_ORDER_STATUS);
+        }
     }
 }
