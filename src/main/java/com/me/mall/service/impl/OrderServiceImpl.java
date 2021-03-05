@@ -271,4 +271,21 @@ public class OrderServiceImpl implements OrderService {
         pageInfo.setList(orderVOList);
         return pageInfo;
     }
+
+    @Override
+    public void pay(String orderNo) {
+        Order order = orderMapper.selectByOrderNo(orderNo);
+        // 查不到订单，报错
+        if (order == null) {
+            throw new MyMallException(MyMallExceptionEnum.NO_ORDER);
+        }
+        // 支付前的判断
+        if (order.getOrderStatus() == Constant.OrderStatusEnum.NOT_PAID.getCode()) {
+            order.setOrderStatus(Constant.OrderStatusEnum.PAID.getCode());
+            order.setPayTime(new Date());
+            orderMapper.updateByPrimaryKeySelective(order);
+        } else {
+            throw new MyMallException(MyMallExceptionEnum.WRONG_ORDER_STATUS);
+        }
+    }
 }

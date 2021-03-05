@@ -20,4 +20,6 @@ public interface OrderService {
     String qrcode(String orderNo);
 
     PageInfo listForAdmin(Integer pageNum, Integer pageSize);
+
+    void pay(String orderNo);
 }
