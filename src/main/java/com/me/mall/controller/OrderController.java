@@ -6,10 +6,7 @@ import com.me.mall.model.request.CreateOrderReq;
 import com.me.mall.model.vo.OrderVO;
 import com.me.mall.service.OrderService;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -242,5 +239,17 @@ public class OrderController {
     public ApiRestResponse cancel(@RequestParam String orderNo) {
         orderService.cancel(orderNo);
         return ApiRestResponse.success();
+    }
+
+    /**
+     * 生成支付二维码
+     * @param orderNo
+     * @return
+     */
+    @PostMapping("order/qrcode")
+    @ApiOperation("生成支付二维码")
+    public ApiRestResponse qrcode(@RequestParam String orderNo) {
+        String pngAddress = orderService.qrcode(orderNo);
+        return ApiRestResponse.success(pngAddress);
     }
 }
