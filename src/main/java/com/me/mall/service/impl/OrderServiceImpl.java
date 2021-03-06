@@ -34,6 +34,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -252,6 +254,15 @@ public class OrderServiceImpl implements OrderService {
     public String qrcode(String orderNo) {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
+        // 如果在同一个局域网扫描这个二维码查看，需要获取局域网ip
+        // 发布到线上环境时，这几行代码要去掉，这里ip仅供本地调试用
+//        try {
+//            // 获取这个ip跟系统有关，如果获取不到就抛出异常，这样手机和生成二维码的主机在同一局域网就能打开了
+//            // 但是你直接用微信扫描为返回系统异常的json信息，因为你没带上登录的cookie信息
+//            ip = InetAddress.getLocalHost().getHostAddress();
+//        } catch (UnknownHostException e) {
+//            e.printStackTrace();
+//        }
         String address = ip + ":" + request.getLocalPort(); // 包含ip和端口号
         String payUrl = "http://" + address + "/pay?orderNo=" + orderNo;
         try {
