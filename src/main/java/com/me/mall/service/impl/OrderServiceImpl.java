@@ -20,6 +20,7 @@ import com.me.mall.model.vo.OrderItemVO;
 import com.me.mall.model.vo.OrderVO;
 import com.me.mall.service.CartService;
 import com.me.mall.service.OrderService;
+import com.me.mall.service.UserService;
 import com.me.mall.util.OrderCodeFactory;
 import com.me.mall.util.QRCodeGenerator;
 import org.springframework.beans.BeanUtils;
@@ -54,6 +55,8 @@ public class OrderServiceImpl implements OrderService {
     private OrderItemMapper orderItemMapper;
     @Value("${file.upload.ip}")
     String ip;
+    @Resource
+    private UserService userService;
 
     // 数据库事务
     @Transactional(rollbackFor = Exception.class) // 遇到任何异常都要回滚
@@ -244,6 +247,7 @@ public class OrderServiceImpl implements OrderService {
             throw new MyMallException(MyMallExceptionEnum.WRONG_ORDER_STATUS);
         }
     }
+
     @Override
     public String qrcode(String orderNo) {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
@@ -283,6 +287,48 @@ public class OrderServiceImpl implements OrderService {
         if (order.getOrderStatus() == Constant.OrderStatusEnum.NOT_PAID.getCode()) {
             order.setOrderStatus(Constant.OrderStatusEnum.PAID.getCode());
             order.setPayTime(new Date());
+            orderMapper.updateByPrimaryKeySelective(order);
+        } else {
+            throw new MyMallException(MyMallExceptionEnum.WRONG_ORDER_STATUS);
+        }
+    }
+
+    // 发货
+    @Override
+    public void deliver(String orderNo) {
+        Order order = orderMapper.selectByOrderNo(orderNo);
+        // 查不到订单，报错
+        if (order == null) {
+            throw new MyMallException(MyMallExceptionEnum.NO_ORDER);
+        }
+        // 发货前的判断
+        if (order.getOrderStatus() == Constant.OrderStatusEnum.PAID.getCode()) {
+            order.setOrderStatus(Constant.OrderStatusEnum.DELIVERED.getCode());
+            order.setDeliveryTime(new Date());
+            orderMapper.updateByPrimaryKeySelective(order);
+        } else {
+            throw new MyMallException(MyMallExceptionEnum.WRONG_ORDER_STATUS);
+        }
+    }
+
+    // 完结订单
+    @Override
+    public void finish(String orderNo) {
+        Order order = orderMapper.selectByOrderNo(orderNo);
+        // 查不到订单，报错
+        if (order == null) {
+            throw new MyMallException(MyMallExceptionEnum.NO_ORDER);
+        }
+        // 如果是普通用户，就要校验订单的所属
+        if (!userService.checkAdminRole(UserFilter.currentUser) &&
+                !order.getUserId().equals(UserFilter.currentUser.getId())) {
+            // 不是管理员，且当前用户id和订单所属用户id不一致的情况下(别人的订单)
+            throw new MyMallException(MyMallExceptionEnum.NOT_YOUR_ORDER);
+        }
+        // 发货后可以完结订单
+        if (order.getOrderStatus() == Constant.OrderStatusEnum.DELIVERED.getCode()) {
+            order.setOrderStatus(Constant.OrderStatusEnum.FINISHED.getCode());
+            order.setEndTime(new Date());
             orderMapper.updateByPrimaryKeySelective(order);
         } else {
             throw new MyMallException(MyMallExceptionEnum.WRONG_ORDER_STATUS);
