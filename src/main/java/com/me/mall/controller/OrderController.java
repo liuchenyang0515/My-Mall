@@ -246,7 +246,7 @@ public class OrderController {
      * @param orderNo
      * @return
      */
-    @PostMapping("order/qrcode")
+    @GetMapping("order/qrcode")
     @ApiOperation("生成支付二维码")
     public ApiRestResponse qrcode(@RequestParam String orderNo) {
         String pngAddress = orderService.qrcode(orderNo);
