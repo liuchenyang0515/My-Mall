@@ -32,7 +32,7 @@ public class UserController {
 
     @PostMapping("/register")
     @ResponseBody
-    public ApiRestResponse register(@RequestParam("username") String username, @RequestParam("password") String password) throws MyMallException {
+    public ApiRestResponse register(@RequestParam("userName") String username, @RequestParam("password") String password) throws MyMallException {
         if (StringUtils.isEmpty(username)) {
             return ApiRestResponse.error(MyMallExceptionEnum.NEED_USER_NAME);
         }
@@ -73,7 +73,7 @@ public class UserController {
      */
     @PostMapping("/login")
     @ResponseBody
-    public ApiRestResponse login(@RequestParam("username") String username,
+    public ApiRestResponse login(@RequestParam("userName") String username,
                                  @RequestParam("password") String password,
                                  HttpSession session) throws MyMallException {
         if (StringUtils.isEmpty(username)) {
@@ -139,7 +139,7 @@ public class UserController {
      */
     @PostMapping("/adminLogin")
     @ResponseBody
-    public ApiRestResponse adminLogin(@RequestParam("username") String username,
+    public ApiRestResponse adminLogin(@RequestParam("userName") String username,
                                       @RequestParam("password") String password,
                                       HttpSession session) throws MyMallException {
         if (StringUtils.isEmpty(username)) {

@@ -81,7 +81,7 @@ public class OrderController {
      * @param orderNo
      * @return
      */
-    @PostMapping("order/detail")
+    @GetMapping("order/detail")
     @ApiOperation("前台订单详情")
     public ApiRestResponse detail(@RequestParam String orderNo) {
         OrderVO orderVO = orderService.detail(orderNo);
@@ -222,7 +222,7 @@ public class OrderController {
      * @param pageSize
      * @return
      */
-    @PostMapping("order/list")
+    @GetMapping("order/list")
     @ApiOperation("前台订单列表")
     public ApiRestResponse list(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
         PageInfo pageInfo = orderService.listForCustomer(pageNum, pageSize);

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="fatal">
   <Properties>
-    <!-- mac电脑输出日志的文件夹${sys:user.home}/logs可以自行配置 -->
-    <Property name="baseDir" value="D:\logs"/>
+    <!-- mac电脑输出日志的文件夹${sys:user.home}/logs可以自行配置，
+     window本地在D:\logs，云服务器改为/root/logs
+     -->
+    <Property name="baseDir" value="/root/logs"/>
   </Properties>
 
   <Appenders>
