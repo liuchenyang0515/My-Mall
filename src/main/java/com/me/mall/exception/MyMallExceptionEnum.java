@@ -4,6 +4,9 @@ package com.me.mall.exception;
  * 描述：异常枚举
  */
 public enum MyMallExceptionEnum {
+    /**
+     * 下面是枚举数据项，根据代码规范，枚举字段使用private修饰，并且枚举类不应有set方法
+     */
     NEED_USER_NAME(10001, "用户名不能为空"),
     NEED_PASSWORD(10002, "密码不能为空"),
     PASSWORD_TOO_SHORT(10003, "密码长度不能小于8位"),
@@ -30,11 +33,11 @@ public enum MyMallExceptionEnum {
     /**
      * 异常码
      */
-    Integer code;
+    private Integer code;
     /**
      * 异常信息
      */
-    String msg;
+    private String msg;
 
     MyMallExceptionEnum(Integer code, String msg) {
         this.code = code;
@@ -45,15 +48,7 @@ public enum MyMallExceptionEnum {
         return code;
     }
 
-    public void setCode(Integer code) {
-        this.code = code;
-    }
-
     public String getMsg() {
         return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
     }
 }
