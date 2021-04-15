@@ -33,11 +33,11 @@ public enum MyMallExceptionEnum {
     /**
      * 异常码
      */
-    private Integer code;
+    private final Integer code;
     /**
      * 异常信息
      */
-    private String msg;
+    private final String msg;
 
     MyMallExceptionEnum(Integer code, String msg) {
         this.code = code;
